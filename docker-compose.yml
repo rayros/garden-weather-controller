@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: garden_weather_controller
+      POSTGRES_PASSWORD: garden_weather_controller_password
+      POSTGRES_DB: garden_weather_controller
+
+  garden-weather-controller:
+    image: garden-weather-controller
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=garden_weather_controller
+      - DB_PASSWORD=garden_weather_controller_password
+      - DB_NAME=garden_weather_controller
+      - DB_PORT=5432
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_PORT=${MQTT_PORT}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+      - MQTT_TOPIC=${MQTT_TOPIC}
+      - OPEN_WEATHER_MAP_API_KEY=${OPEN_WEATHER_MAP_API_KEY}
+      - MIN_AVERAGE_DAILY_TEMPERATURE_IN_CELSIUS=${MIN_AVERAGE_DAILY_TEMPERATURE_IN_CELSIUS}
+
