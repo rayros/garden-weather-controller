@@ -1,5 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm"
 
+class ColumnNumericTransformer {
+    to(data: number): number {
+        return data;
+    }
+    from(data: string): number {
+        return parseFloat(data);
+    }
+}
+
 @Entity()
 export class HourlyWeather {
 
@@ -9,10 +18,16 @@ export class HourlyWeather {
     @CreateDateColumn()
     date: Date
 
-    @Column()
+    @Column({
+        type: 'decimal',
+        transformer: new ColumnNumericTransformer(),
+    })
     rain: number
 
-    @Column({ type: 'decimal' })
+    @Column({
+        type: 'decimal',
+        transformer: new ColumnNumericTransformer(),
+    })
     temp: number
 
 }

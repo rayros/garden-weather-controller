@@ -3,6 +3,7 @@ import * as cron from "node-cron";
 import { connectAsync } from 'async-mqtt';
 import { fetchAndSaveWeather } from "./fetch-and-save-weather";
 import { closeValve, openValve, shouldOpenValve } from "./valve";
+import { HourlyWeather } from "./entity/HourlyWeather";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -12,10 +13,17 @@ AppDataSource.initialize()
       password: process.env.MQTT_PASSWORD
     });
 
-    await client.subscribe(process.env.MQTT_TOPIC);
+    await client.subscribe([
+      process.env.MQTT_WEATHER_STATUS_TOPIC
+    ]);
 
     client.on('message', async (topic, message) => {
-      console.log(topic, message.toString());
+      if (topic === process.env.MQTT_WEATHER_STATUS_TOPIC) {
+        const hourlyWeather = await AppDataSource.manager.findOne(HourlyWeather, {});
+        await client.publish(process.env.MQTT_WEATHER_RESULT_TOPIC, JSON.stringify(hourlyWeather));
+      } else {
+        console.log(topic, message.toString());
+      }
     })
 
     cron.schedule(
@@ -39,7 +47,7 @@ AppDataSource.initialize()
       "0 * * * *", // At minute 0
       async () => {
         console.log("Checking rain and temperature.");
-        await fetchAndSaveWeather();
+        await fetchAndSaveWeather(client);
       }
     ).start();
 
