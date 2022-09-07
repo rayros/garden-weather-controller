@@ -15,7 +15,8 @@ const minAverageDailyTemperature = Number(process.env.MIN_AVERAGE_DAILY_TEMPERAT
 
 export const shouldOpenValve = async () => {
   const hourlyWeatherLast24h = await AppDataSource.manager.find(HourlyWeather, {
-    take: 24
+    take: 24,
+    order: { id: 'DESC' }
   });
 
   if (hourlyWeatherLast24h.length < 24) {
