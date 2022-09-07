@@ -9,7 +9,7 @@ export const fetchAndSaveWeather = async (client: AsyncMqttClient) => {
   hourlyWeather.rain = weather.rain;
   hourlyWeather.temp = weather.temp;
   await AppDataSource.manager.save(hourlyWeather);
-  console.log(await AppDataSource.manager.findOne(HourlyWeather, {}));
+  console.log(await AppDataSource.manager.findOne(HourlyWeather, { order: { id: 'DESC' } }));
   await client.publish(process.env.MQTT_WEATHER_RESULT_TOPIC, JSON.stringify(hourlyWeather));
 }
 

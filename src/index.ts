@@ -19,7 +19,7 @@ AppDataSource.initialize()
 
     client.on('message', async (topic, message) => {
       if (topic === process.env.MQTT_WEATHER_STATUS_TOPIC) {
-        const hourlyWeather = await AppDataSource.manager.findOne(HourlyWeather, {});
+        const hourlyWeather = await AppDataSource.manager.findOne(HourlyWeather, { order: { id: 'DESC' } });
         await client.publish(process.env.MQTT_WEATHER_RESULT_TOPIC, JSON.stringify(hourlyWeather));
       } else {
         console.log(topic, message.toString());
