@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     synchronize: true,
-    logging: true,
+    logging: false,
     entities: [HourlyWeather],
     migrations: [],
     subscribers: [],

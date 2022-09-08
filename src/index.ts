@@ -33,13 +33,20 @@ AppDataSource.initialize()
         if (await shouldOpenValve()) {
           openValve(client);
         }
+      },
+      {
+        timezone: process.env.TIMEZONE
       }
     ).start();
+
     cron.schedule(
       "0 6 * * *", // At 06:00
       () => {
         console.log("Closing valve at 06:00");
         closeValve(client);
+      },
+      {
+        timezone: process.env.TIMEZONE
       }
     ).start();
 
@@ -52,7 +59,6 @@ AppDataSource.initialize()
     ).start();
 
     await closeValve(client);
-    await shouldOpenValve()
   })
   .catch((error) => console.log(error));
 
