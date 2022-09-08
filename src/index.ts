@@ -52,6 +52,7 @@ AppDataSource.initialize()
     ).start();
 
     await closeValve(client);
+    await shouldOpenValve()
   })
   .catch((error) => console.log(error));
 
