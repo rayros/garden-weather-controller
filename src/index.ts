@@ -1,9 +1,8 @@
-import { AppDataSource } from "./data-source";
-import * as cron from "node-cron";
 import { connectAsync } from 'async-mqtt';
-import { fetchAndSaveWeather } from "./fetch-and-save-weather";
+import * as cron from "node-cron";
+import { AppDataSource } from "./data-source";
+import { fetchAndSaveWeather, publishLastHourlyWeather } from "./fetch-and-save-weather";
 import { closeValve, openValve, shouldOpenValve } from "./valve";
-import { HourlyWeather } from "./entity/HourlyWeather";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -17,12 +16,11 @@ AppDataSource.initialize()
       process.env.MQTT_WEATHER_STATUS_TOPIC
     ]);
 
-    client.on('message', async (topic, message) => {
+    await closeValve(client);
+
+    client.on('message', async (topic: string) => {
       if (topic === process.env.MQTT_WEATHER_STATUS_TOPIC) {
-        const hourlyWeather = await AppDataSource.manager.findOne(HourlyWeather, { order: { id: 'DESC' } });
-        await client.publish(process.env.MQTT_WEATHER_RESULT_TOPIC, JSON.stringify(hourlyWeather));
-      } else {
-        console.log(topic, message.toString());
+        await publishLastHourlyWeather(client);
       }
     })
 
@@ -58,7 +56,6 @@ AppDataSource.initialize()
       }
     ).start();
 
-    await closeValve(client);
   })
   .catch((error) => console.log(error));
 

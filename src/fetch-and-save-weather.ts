@@ -3,14 +3,18 @@ import axios from "axios";
 import { AppDataSource } from "./data-source";
 import { HourlyWeather } from "./entity/HourlyWeather";
 
+export const publishLastHourlyWeather = async (client: AsyncMqttClient) => {
+  const hourlyWeather = await AppDataSource.manager.findOne(HourlyWeather, { order: { id: 'DESC' } });
+  await client.publish(process.env.MQTT_WEATHER_RESULT_TOPIC, JSON.stringify(hourlyWeather));
+}
+
 export const fetchAndSaveWeather = async (client: AsyncMqttClient) => {
   const weather = await fetchWeather();
   const hourlyWeather = new HourlyWeather();
   hourlyWeather.rain = weather.rain;
   hourlyWeather.temp = weather.temp;
   await AppDataSource.manager.save(hourlyWeather);
-  console.log(await AppDataSource.manager.findOne(HourlyWeather, { order: { id: 'DESC' } }));
-  await client.publish(process.env.MQTT_WEATHER_RESULT_TOPIC, JSON.stringify(hourlyWeather));
+  await publishLastHourlyWeather(client);
 }
 
 async function fetchWeather() {
@@ -20,3 +24,4 @@ async function fetchWeather() {
     temp: response.data.main.temp as number,
   }
 }
+
