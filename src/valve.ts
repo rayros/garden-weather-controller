@@ -16,7 +16,6 @@ export const closeValve = async (client: AsyncMqttClient) => {
 export const shouldOpenValve = async () => {
   const oneDay = new Date();
   oneDay.setDate(oneDay.getDate() - 1);
-  console.log(oneDay.toString());
 
   const hourlyWeatherLast24h = await AppDataSource.manager.find(HourlyWeather, {
     where: {
