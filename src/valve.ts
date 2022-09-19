@@ -6,11 +6,15 @@ import { HourlyWeather } from "./entity/HourlyWeather";
 const minAverageDailyTemperature = Number(process.env.MIN_AVERAGE_DAILY_TEMPERATURE_IN_CELSIUS);
 
 export const openValve = async (client: AsyncMqttClient) => {
-  await client.publish('cmnd/garden_valve_controller', 'OPEN');
+  await client.publish(process.env.MQTT_VALVE_TOPIC, 'OPEN');
 }
 
 export const closeValve = async (client: AsyncMqttClient) => {
-  await client.publish('cmnd/garden_valve_controller', 'CLOSE');
+  await client.publish(process.env.MQTT_VALVE_TOPIC, 'CLOSE');
+}
+
+export const requestValveState = async (client: AsyncMqttClient) => {
+  await client.publish(process.env.MQTT_VALVE_TOPIC, '');
 }
 
 export const shouldOpenValve = async () => {
