@@ -1,0 +1,1 @@
+{"version":"1.0.0","name":"garden-weather-controller","dependencies":{"async-mqtt":{"version":"2.6.2"},"axios":{"version":"0.27.2"},"mqtt":{"version":"4.3.7"},"node-cron":{"version":"3.0.1"},"pg":{"version":"8.7.3"},"reflect-metadata":{"version":"0.1.13"},"typeorm":{"version":"0.3.1"}}}

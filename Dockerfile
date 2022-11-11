@@ -1,4 +1,4 @@
-FROM node
+FROM node:alpine AS builder
 
 WORKDIR /app
 
@@ -11,6 +11,10 @@ COPY . .
 
 RUN npm run build
 
-RUN rm -rf src package-lock.json tsconfig.json README.md
+FROM node:alpine
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/package.json package.json
 
 CMD [ "npm", "start" ]

@@ -10,10 +10,10 @@ services:
       POSTGRES_DB: garden_weather_controller
 
   garden-weather-controller:
-    image: garden-weather-controller
     build:
       context: .
       dockerfile: ./Dockerfile
+    image: docker-registry.nolife.cyou/garden-weather-controller
     restart: always
     depends_on:
       - db
